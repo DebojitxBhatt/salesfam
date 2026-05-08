@@ -1,5 +1,6 @@
 "use client"
 
+import { toast } from "@/components/ui/use-toast";
 import { useState } from "react"
 
 export default function ImageUpload() {
@@ -11,27 +12,35 @@ export default function ImageUpload() {
   }
 
   const handleImageUpload = async () => {
+    if (!image) return
+
     const formData = new FormData()
-    formData.append("file", image)
-    formData.append("upload_preset", "p2y46g7e")
+    formData.append("image", image)
 
     try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/drzedrk1e/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json().catch(() => null)
 
       if (response.ok) {
-        const data = await response.json()
-        console.log("Image uploaded successfully:", data)
+        toast({
+          title: "Image uploaded successfully",
+          description: data?.message,
+        })
       } else {
-        console.error("Error uploading image:", response.statusText)
+        toast({
+          title: "Error uploading image",
+          description: data?.message || response.statusText,
+        })
       }
     } catch (error) {
-      console.error("Error uploading image:", error)
+      toast({
+        title: "Error uploading image",
+        description: error.message,
+      })
     }
   }
 

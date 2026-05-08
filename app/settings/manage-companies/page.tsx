@@ -4,5 +4,5 @@ import DataTable from "./Datatable"
 
 export default async function ManageCompanyPage() {
 
-  return <div className="min-w-[1400px]"><DataTable /></div>
+  return <div className="min-w-11/12"><DataTable /></div>
 }

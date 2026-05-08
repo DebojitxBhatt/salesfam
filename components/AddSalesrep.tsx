@@ -55,6 +55,11 @@ export default function AddSalesrep(props) {
         body: JSON.stringify({ email }),
       })
 
+      if (!resUserExists.ok) {
+        const errorData = await resUserExists.json().catch(() => null)
+        throw new Error(errorData?.message || "Unable to check existing user.")
+      }
+
       const { user } = await resUserExists.json()
 
       if (user) {

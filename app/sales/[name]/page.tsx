@@ -93,7 +93,7 @@ export default function Sales({ params }) {
   }, [name])
   return (
     <>
-      <div className="container relative z-0 min-w-[1400px]">
+      <div className="container relative z-0 min-w-11/12">
         <div className="">
           <div className="flex p-5 bg-white border rounded-md shadow-md min-h-32">
             {userDetails && (

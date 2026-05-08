@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server"
+import NextServerModule from "next/server"
+
+const NextResponse = NextServerModule.NextResponse ?? NextServerModule
 import Client from "@/models/client"
 import Project from "@/models/project"
 import User from "@/models/user"

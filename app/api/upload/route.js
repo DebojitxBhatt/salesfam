@@ -1,24 +1,68 @@
-// pages/api/upload.js
+import NextServerModule from "next/server"
+
+const NextResponse = NextServerModule.NextResponse ?? NextServerModule
 import { getServerSession } from "next-auth"
-import { parser } from "../../../lib/cloudinary"
 
+import { authOptions } from "@/lib/auth"
 
-export default async function handler(req, res) {
-  const session = await getServerSession(req)
+export async function POST(req) {
+  const session = await getServerSession(authOptions)
+
   if (!session) {
-    return NextResponse.json("Unauthorized")
-  }else{
-    try {
-      if (req.method === "POST") {
-        await parser.single("image")(req, res)
-        res.json({ message: "Image uploaded successfully" })
-      } else {
-        res.status(405).json({ error: "Method not allowed" })
-      }
-    } catch (error) {
-      console.error("Error uploading image", error)
-      res.status(500).json({ error: "Error uploading image" })
-    }
+    return NextResponse.json({ message: "Unauthorized." }, { status: 401 })
   }
-  
+
+  if (!process.env.IMGBB_HOSTING_KEY) {
+    return NextResponse.json(
+      { message: "IMGBB_HOSTING_KEY is not configured." },
+      { status: 500 }
+    )
+  }
+
+  try {
+    const formData = await req.formData()
+    const image = formData.get("image")
+
+    if (!image) {
+      return NextResponse.json(
+        { message: "Image file is required." },
+        { status: 400 }
+      )
+    }
+
+    const uploadData = new FormData()
+    uploadData.append("image", image)
+
+    const response = await fetch(
+      `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_HOSTING_KEY}`,
+      {
+        method: "POST",
+        body: uploadData,
+      }
+    )
+
+    const data = await response.json().catch(() => null)
+
+    if (!response.ok || !data?.success) {
+      return NextResponse.json(
+        {
+          message:
+            data?.error?.message ||
+            data?.message ||
+            "Image hosting upload failed.",
+        },
+        { status: response.status || 500 }
+      )
+    }
+
+    return NextResponse.json({
+      url: data.data.display_url || data.data.url,
+    })
+  } catch (error) {
+    console.log("Image upload error:", error)
+    return NextResponse.json(
+      { message: error.message || "Image upload failed." },
+      { status: 500 }
+    )
+  }
 }

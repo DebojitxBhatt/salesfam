@@ -132,10 +132,10 @@ export default function ProjectDetails({ params }) {
       </div>
     )
   }
-  if (!data) return <div className="container min-w-[1400px] text-center"><p>No project data</p></div>
+  if (!data) return <div className="container min-w-11/12 text-center"><p>No project data</p></div>
   return (
     <>
-      <div className="container min-w-[1400px]">
+      <div className="container min-w-11/12">
         <Tabs defaultValue="overview" className="flex items-start w-full">
           <TabsList className="w-3/12 mt-2 pr-14">
             <div className="flex w-full flex-col [&>*]:mb-2">

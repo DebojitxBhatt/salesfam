@@ -17,9 +17,7 @@ export default function IndexPage() {
       <Suspense fallback={<div>Loading...</div>}>
         <ReferralComp />
       </Suspense>
-      <div className="sticky top-0 z-[9999999999]">
         <Header />
-      </div>
       <Hero />
       <Clients />
       <Help />

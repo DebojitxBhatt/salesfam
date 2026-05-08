@@ -11,7 +11,7 @@ import UserNav from "./userNav"
 
 export default function Header() {
   const { data: session } = useSession()
-  const role = session?.user?.role
+  const role = session?.user?.role 
 
   const pathname = usePathname()
   const [isScrolling, setIsScrolling] = useState(false)
@@ -35,10 +35,10 @@ export default function Header() {
   }, [])
   // z-[99999999] border-b sticky pb-0 pt-1   transition-all duration-500 ease-in-out top-0bg-white bg-opacity-90 backdrop-blur-sm ${isScrolling?" ":""}
   return (
-    <header className={` min-w-[1400px] py-6`}>
+    <header className={` min-w-11/12 py-6`}>
       <div className="container flex items-center">
         <div className="w-4/12">
-          <Link href="/dashboard" className="inline-block pt-1">
+          <Link href="/" className="inline-block pt-1">
             <Image src="/logo.png" alt="Logo" width="120" height="102" />
           </Link>
         </div>
@@ -75,7 +75,7 @@ export default function Header() {
                   Training
                 </Link>
               </li>
-              {/* <li>
+              <li>
                 <Link
                   className={`flex items-center justify-center p-2 ${
                     pathname == "/sales-meeting" ? "font-bold" : ""
@@ -84,7 +84,7 @@ export default function Header() {
                 >
                   Sales Meeting
                 </Link>
-              </li> */}
+              </li>
             </ul>
           )}
 

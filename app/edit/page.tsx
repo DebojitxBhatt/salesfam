@@ -20,7 +20,7 @@ export default function ProjectDetails({ params }) {
 
   if (isLoading) {
     return (
-      <div className="container min-w-[1400px]">
+      <div className="container min-w-11/12">
         <h1 className="mt-10 text-2xl text-center">loading...</h1>
       </div>
     )

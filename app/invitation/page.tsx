@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import SetPassword from "@/components/SetPassword"
 
-import { authOptions } from "./../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 

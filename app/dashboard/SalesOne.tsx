@@ -111,7 +111,7 @@ export default function SalesOne() {
       {pendingProject && pendingProject.length > 0 && (
         <AlertBox projects={pendingProject} />
       )}
-      <div className="grid grid-cols-4 gap-4 min-w-[1400px]">
+      <div className="grid grid-cols-4 gap-4 min-w-11/12">
         {!session && <CardSkeleton />}
         {session && <StatCard title="Sales Rep" value={salesGuy} />}
 

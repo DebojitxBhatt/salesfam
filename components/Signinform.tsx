@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { useState } from "react"
-import { FormEvent } from "react"
+// import * as React from "react"
+import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 
-import { cn } from "@/lib/utils"
 import { useToast } from "@/components/ui/use-toast"
 import { Icons } from "@/components/icons"
 
@@ -25,65 +24,74 @@ export function Signinform() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    if (!name || !email || !password) {
-      console.log("all fields required")
+
+    const cleanName = name.trim()
+    const cleanEmail = email.trim().toLowerCase()
+
+    if (!cleanName || !cleanEmail || !password) {
       toast({
         variant: "destructive",
-        title: "all fields required!",
+        title: "All fields are required.",
+      })
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Password must be at least 6 characters.",
       })
       setLoading(false)
       return
     }
 
     try {
-      const resUserExists = await fetch("/api/userExists", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      })
-
-      const { user } = await resUserExists.json()
-
-      if (user) {
-        toast({
-          variant: "destructive",
-          title: "User already Exist!",
-        })
-        console.log("User already Exist!")
-        setLoading(false)
-        return
-      }
-
-      const res = await fetch("api/signin", {
+      const res = await fetch("/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          email,
+          name: cleanName,
+          email: cleanEmail,
           password,
         }),
       })
 
       if (res.ok) {
-        router.push("/")
+        const loginResult = await signIn("credentials", {
+          email: cleanEmail,
+          password,
+          redirect: false,
+        })
+
+        if (loginResult?.error) {
+          toast({
+            title: "Account created successfully.",
+            description: "Please login with your new account.",
+          })
+          router.push("/login")
+          return
+        }
+
+        router.replace("/dashboard")
+        router.refresh()
       } else {
-        console.log("user reg failed!")
+        const errorData = await res.json().catch(() => null)
         toast({
           variant: "destructive",
-          title: "user reg failed!",
+          title: errorData?.message || "User registration failed.",
         })
         setLoading(false)
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error during reg:" + error,
+        title: "Error during registration.",
+        description:
+          error instanceof Error ? error.message : "Please try again.",
       })
-      console.log("Error during reg:", error)
       setLoading(false)
     }
   }
@@ -97,7 +105,8 @@ export function Signinform() {
               Full Name
             </Label>
             <Input
-              onChange={(e) => setName(e.target.value.toLowerCase())}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Name"
               type="text"
               autoCapitalize="none"
@@ -110,7 +119,8 @@ export function Signinform() {
               Email
             </Label>
             <Input
-              onChange={(e) => setEmail(e.target.value.toLowerCase())}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="email@example.com"
               type="email"
               autoCapitalize="none"
@@ -123,11 +133,12 @@ export function Signinform() {
               Password
             </Label>
             <Input
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               type="password"
               autoCapitalize="none"
-              autoComplete="password"
+              autoComplete="new-password"
               autoCorrect="off"
             />
           </div>

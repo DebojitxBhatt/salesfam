@@ -12,6 +12,48 @@ import { Icons } from "../icons"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
+function dataUrlToFile(dataUrl, fileName) {
+  const [metadata, base64] = dataUrl.split(",")
+
+  if (!metadata?.startsWith("data:") || !base64) {
+    throw new Error("Invalid image data.")
+  }
+
+  const mime = metadata.match(/data:(.*);base64/)?.[1] || "image/png"
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  return new File([bytes], fileName, { type: mime })
+}
+
+async function imageSourceToFile(source) {
+  if (source instanceof File) {
+    return source
+  }
+
+  if (typeof source !== "string") {
+    throw new Error("Please select an image first.")
+  }
+
+  if (source.startsWith("data:")) {
+    return dataUrlToFile(source, "profile.png")
+  }
+
+  if (source.startsWith("blob:")) {
+    const response = await fetch(source)
+    const blob = await response.blob()
+    return new File([blob], "profile.png", {
+      type: blob.type || "image/png",
+    })
+  }
+
+  throw new Error("Unsupported image format.")
+}
+
 export default function ProfileUpload({ setAvatar }) {
   const { toast } = useToast()
   const [isLoading, setLoading] = useState(false)
@@ -22,6 +64,8 @@ export default function ProfileUpload({ setAvatar }) {
   const id = session?.user?.id
   const handleImageChange = (e) => {
     const file = e.target.files[0]
+    if (!file) return
+
     setImage(file)
     setSrc(URL.createObjectURL(file))
     setResult(URL.createObjectURL(file))
@@ -62,29 +106,41 @@ export default function ProfileUpload({ setAvatar }) {
   }
 
   const handleImageUpload = async () => {
+    if (!image) return
+
     setLoading(true)
     const formData = new FormData()
-    formData.append("file", image)
-    formData.append("upload_preset", "p2y46g7e")
+
+    const uploadImage = await imageSourceToFile(image)
+
+    formData.append("image", uploadImage)
 
     try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/drzedrk1e/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json().catch(() => null)
 
       if (response.ok) {
-        const data = await response.json()
-        console.log("Image uploaded successfully:", data)
         updateAvatar(data.url)
       } else {
-        console.error("Error uploading image:", response.statusText)
+        toast({
+          variant: "destructive",
+          title: "Image upload failed.",
+          description: data?.message || response.statusText,
+        })
+        setLoading(false)
       }
     } catch (error) {
       console.error("Error uploading image:", error)
+      toast({
+        variant: "destructive",
+        title: "Image upload failed.",
+        description: error instanceof Error ? error.message : "Please try again.",
+      })
+      setLoading(false)
     }
   }
 
@@ -103,7 +159,14 @@ export default function ProfileUpload({ setAvatar }) {
               </button>
               <button
                 onClick={() => {
-                  setSrc(null), setImage(result), setAvatar(result)
+                  const selectedImage =
+                    typeof result === "string" && result.startsWith("data:")
+                      ? result
+                      : image
+
+                  setSrc(null)
+                  setImage(selectedImage)
+                  setAvatar(result || src)
                 }}
               >
                 <Check className="text-green-500" />

@@ -261,7 +261,7 @@ export default function ManageUser() {
   }
 
   return (
-    <div className="container min-w-[1400px]">
+    <div className="container min-w-11/12">
       <h1 className="text-2xl">Manage Users</h1>
       <div className="flex items-center py-4">
         <div className="flex items-center justify-start w-10/12 px-3 bg-white border rounded-md">

@@ -271,7 +271,7 @@ export default function AddProject() {
   }
 
   return (
-    <div className="container min-w-[1400px]">
+    <div className="container min-w-11/12">
       <div className="flex p-10 mb-5 bg-white border rounded-md">
         <div className="w-full">
           <h4 className="flex items-center mb-5 text-3xl font-semibold text-primary">

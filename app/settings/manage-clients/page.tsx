@@ -225,7 +225,7 @@ export default function ManageClient() {
   }
 
   return (
-    <div className="container min-w-[1400px]">
+    <div className="container min-w-11/12">
       <h1 className="text-2xl">Manage Clients</h1>
       <div className="flex items-center w-full py-4">
         <div className="flex items-center justify-start w-full px-3 bg-white border rounded-md ">

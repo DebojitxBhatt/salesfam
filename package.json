@@ -2,6 +2,10 @@
   "name": "next-template",
   "version": "0.0.2",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "next dev -p 8080",
     "build": "next build",
@@ -78,6 +82,7 @@
     "@types/react-dom": "^18.2.6",
     "@typescript-eslint/parser": "^5.61.0",
     "autoprefixer": "^10.4.14",
+    "daisyui": "^5.5.19",
     "eslint": "^8.44.0",
     "eslint-config-next": "^14.1.0",
     "eslint-config-prettier": "^8.8.0",

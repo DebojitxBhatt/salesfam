@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server"
+import NextServerModule from "next/server"
+
+const NextResponse = NextServerModule.NextResponse ?? NextServerModule
 import { Resend } from "resend"
 import { getServerSession } from "next-auth"
 import { RaycastMagicLinkEmail } from "../../../../components/email-template/email-send"

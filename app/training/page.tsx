@@ -153,7 +153,7 @@ export default function TrainingPage() {
   };
   return (
     <div className="container relative min-h-[100vh] z-0">
-      <div className="flex min-w-[1400px]">
+      <div className="flex min-w-11/12">
         <div className="relative flex w-full min-h-screen">
           <div className="w-full h-full pr-10 mb-10">
             <div>

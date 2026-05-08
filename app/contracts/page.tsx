@@ -64,7 +64,7 @@ export default function ContractsPage() {
 
   return (
     <>
-      <div className="container mb-20 min-w-[1400px]">
+      <div className="container mb-20 min-w-11/12">
         <h4 className="mt-4 text-2xl font-bold">Active Contracts</h4>
         <div
           className={`${

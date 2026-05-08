@@ -4,14 +4,15 @@ export { default } from "next-auth/middleware"
 
 export function middleware(req) {
   const path = req.nextUrl.pathname
-  const isPublicPath = path === "/login" || path === "/signup"
+  const isPublicPath = path === "/" || path === "/login" || path === "/signup"
   if (path.startsWith("/api/auth")) {
     return
   }
   if (
+    path === "/api/signup" ||
     path === "/api/signin" ||
     path === "/api/login" ||
-    path === "/api/signup" ||
+    path === "/api/upload" ||
     path === "/api/userExists"
   ) {
     return

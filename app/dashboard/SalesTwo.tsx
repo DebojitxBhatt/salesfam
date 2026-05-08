@@ -82,7 +82,7 @@ export default function SalesTwo() {
         <AlertBox projects={pendingProject} />
       )}
 
-      <div className="grid grid-cols-4 gap-4 min-w-[1400px]">
+      <div className="grid grid-cols-4 gap-4 min-w-11/12">
         {!totalEarn && totalEarn != 0 && <CardSkeleton />}
         {(totalEarn || totalEarn == 0) && (
           <StatCard title={"Earnings"} value={totalEarn} prefix="$" />

@@ -25,31 +25,47 @@ export function Loginform() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
+    const cleanEmail = email.trim().toLowerCase()
+
+    if (!cleanEmail || !password) {
+      toast({
+        variant: "destructive",
+        title: "Email and password are required.",
+      })
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await signIn("credentials", {
-        email,
+        email: cleanEmail,
         password,
         redirect: false,
       })
-      if (res.error) {
-        console.log("Invalid details!")
+      if (res?.error) {
         toast({
           variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your information.",
+          title: "Invalid email or password.",
+          description: "Please check your information and try again.",
         })
         setLoading(false)
         return
       }
-      router.replace("dashboard")
+      toast({
+        title: "Logged in successfully!",
+        description: "Welcome back.",
+      })
+      router.replace("/dashboard")
+      router.refresh()
     } catch (error) {
       setLoading(false)
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your information.",
+        title: "Unable to login.",
+        description:
+          error instanceof Error ? error.message : "Please try again.",
       })
-      console.log(error)
     }
   }
 
@@ -62,6 +78,7 @@ export function Loginform() {
               Email
             </Label>
             <Input
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
               type="email"
@@ -75,11 +92,12 @@ export function Loginform() {
               Password
             </Label>
             <Input
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              placeholder="Passowrd"
+              placeholder="Password"
               autoCapitalize="none"
-              autoComplete="password"
+              autoComplete="current-password"
               autoCorrect="off"
             />
           </div>
